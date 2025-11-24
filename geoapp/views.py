@@ -11,7 +11,7 @@ MONGO_URI = 'mongodb://3.236.244.253:27017'
 client = MongoClient(MONGO_URI)
 db = client.geodata
  
-OPENWEATHERMAP_API_KEY = os.getenv("3500bf8d2a5ab321cce0fbff9597486e")
+OPENWEATHERMAP_API_KEY = 'e2c15f906c20e4c38967f552199fcf6c'
  
 def continent_view(request):
     if request.method == 'POST':
@@ -30,8 +30,12 @@ def continent_view(request):
                         f"https://api.openweathermap.org/data/2.5/weather",
                         params={"q": capital, "appid": OPENWEATHERMAP_API_KEY, "units": "metric"}
                     ).json()
-                    temp = weather['main']['temp']
-                    desc = weather['weather'][0]['description']
+
+                    if weather.get("cod") == 200:
+                        temp = weather['main']['temp']
+                        desc = weather['weather'][0]['description']
+                    else:
+                        temp, desc = None, weather.get("message", "Not found")
                 except:
                     temp, desc = None, "Not found"
  
